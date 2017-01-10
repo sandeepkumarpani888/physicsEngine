@@ -2,35 +2,12 @@
 #include "opencv/highgui.h"
 #include "bits/stdc++.h"
 #include "unistd.h"
+#include "class/physics.hpp"
 
 #define w 4000
 
 using namespace std;
 using namespace cv;
-
-tuple<int,int> getNextPosition(tuple<int,int> pos,tuple<double,double> vel){
-	tuple<int,int> finalPos=pos;
-	get<0>(finalPos)=get<0>(finalPos)+(int)get<0>(vel)*3;
-	get<1>(finalPos)=get<1>(finalPos)+(int)get<1>(vel)*3;
-	return finalPos;
-}
-
-void drawCircle(Mat image,tuple<int,int> pos){
-	int thickness=2;
-	int lineType=2;
-	Point centre;
-	centre.x=get<0>(pos);
-	centre.y=get<1>(pos);
-	printf("%d %d\n",centre.x,centre.y);
-	circle(image,
-		centre,
-		w/32,
-		Scalar(0,125,255),
-		thickness,
-		lineType
-		);
-	printf("exiting function\n");
-}
 
 int main(int argc,char** argv){
 	char imageName[]="Drawing1";
