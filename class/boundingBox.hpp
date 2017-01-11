@@ -2,19 +2,25 @@
 #include "particles.hpp"
 #include "eventQueue.hpp"
 
-class boundingBox
+class BoundingBox
 {
 private:
 	vector<Particle> particlesInBox;
 	eventQueue events;
 public:
 
+	//The function that starts it all.
+	void startSimulation(){
+		//qwe
+	}
+
 	//Returns the event object in case of collision between particle
 	//and the box.
 	event getCollisionEventP2B(Particle partA){
 		int timeOfCollision=getTimeOfCollisionP2B(
 			partA.getMovementData(),
-			partA.getCordinates());
+			partA.getCordinates(),
+			partA.getRadius());
 		Particle partB;
 		partB.setMass(-1);
 		return event(timeOfCollision,partA,partB);
@@ -27,7 +33,9 @@ public:
 			partA.getMovementData(),
 			partB.getMovementData(),
 			partA.getCordinates(),
-			partB.getCordinates());
+			partB.getCordinates(),
+			partA.getRadius(),
+			partB.getRadius());
 		return event(timeOfCollision,partA,partB);
 	}
 
@@ -55,7 +63,12 @@ public:
 		particlesInBox.clear();
 	};
 
-	//Which side does it collide with (returns an integer)
+	//Function which will allow the addition of particles into the box.
+	void addParticle(Particle _particle){
+		stdd::particlesInBox.push_back(_particle);
+	}
+
+	//Which side does it collide with (returns an integer).
 	int whichSideCollides(){
 		//TODO
 	}	
