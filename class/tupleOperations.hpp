@@ -1,3 +1,5 @@
+#ifndef TUPLEOPERATIONS_H_
+#define TUPLEOPERATIONS_H_
 #include <bits/stdc++.h>
 
 class TupleOperations
@@ -58,3 +60,5 @@ public:
 		return tupleToOperate;
 	}
 };
+
+#endif

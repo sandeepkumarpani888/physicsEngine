@@ -1,3 +1,6 @@
+#ifndef PARTICLE_H_
+#define PARTICLE_H_
+
 #include <bits/stdc++.h>
 #include "movement.hpp"
 
@@ -22,6 +25,15 @@ public:
 		this->radius=_radius;
 	};
 
+	void updatePosition(){
+		Movement _move=this->move;
+		std::tuple<int,int> pos=_move.getCordinates();
+		std::tuple<double,double> vel=_move.getVelocity();
+		std::get<0>(pos)+=(int)std::get<0>(vel);
+		std::get<1>(pos)+=(int)std::get<1>(vel);
+		this->move.setCordinates(pos);
+	}
+
 	Movement getMovementData(){
 		return this->move;
 	};
@@ -37,4 +49,26 @@ public:
 	int getRadius(){
 		return this->radius;
 	}
+
+	void setRadius(int _radius){
+		this->radius=_radius;
+	}
+
+	void setCordinates(std::tuple<int,int> _cord){
+		this->move.setCordinates(_cord);
+	}
+
+	void setVelocity(std::tuple<double,double> _vel){
+		this->move.setVelocity(_vel);
+	}
+
+	std::tuple<int,int> getCordinates(){
+		return this->move.getCordinates();
+	}
+
+	std::tuple<double,double> getVelocity(){
+		return this->move.getVelocity();
+	}
 };
+
+#endif

@@ -1,17 +1,15 @@
+#ifndef PHYSICS_H_
+#define PHYSICS_H_
+
 #include <bits/stdc++.h>
 #include "particle.hpp"
 #include "tupleOperations.hpp"
 
-class physics
+class Physics
 {
 private:
 	TupleOperations tO;
 public:
-
-	//Class construtor
-	physics(){
-		printf("Creating object for physics\n");
-	};
 
 	//Gets the side of the wall with which to collide.
 	int getSideToCollideWith(Movement move){
@@ -27,10 +25,10 @@ public:
 		int radiusB){
 		std::tuple<double,double> velA=movA.getVelocity();
 		std::tuple<double,double> velB=movB.getVelocity();
-		bool xCorSame=isSameI(std::get<0>(cordA),std::get<0>(cordB));
-		bool yCorSame=isSameI(std::get<1>(cordA),std::get<1>(cordB));
-		bool xVelSame=isSameD(std::get<0>(velA),std::get<0>(velB));
-		bool yVelSame=isSameD(std::get<1>(velA),std::get<1>(velB));
+		bool xCorSame=tO.isSameI(std::get<0>(cordA),std::get<0>(cordB));
+		bool yCorSame=tO.isSameI(std::get<1>(cordA),std::get<1>(cordB));
+		bool xVelSame=tO.isSameD(std::get<0>(velA),std::get<0>(velB));
+		bool yVelSame=tO.isSameD(std::get<1>(velA),std::get<1>(velB));
 		if(xCorSame && yCorSame){
 			return 0.0;
 		}
@@ -53,7 +51,7 @@ public:
 		else if(!xCorSame && !yCorSame){
 			double timeX=(std::get<0>(cordA)-std::get<0>(cordB))/(std::get<0>(velA)-std::get<0>(velB));
 			double timeY=(std::get<1>(cordA)-std::get<1>(cordB))/(std::get<1>(velA)-std::get<1>(velB));
-			if(isSameD(timeX,timeY) && timeX>=0.0){
+			if(tO.isSameD(timeX,timeY) && timeX>=0.0){
 				return timeX;
 			}
 		}
@@ -61,7 +59,10 @@ public:
 	}
 
 	//Gets the time of collision of the two particles.
-	int getTimeOfCollisionP2B(Movement movA,std::tuple<int,int> corA){
+	int getTimeOfCollisionP2B(
+		Movement movA,
+		std::tuple<int,int> corA,
+		int radius){
 		//TODO
 	}
 
@@ -83,3 +84,5 @@ public:
 		moveB.setVelocity(finalVelB);
 	}
 };
+
+#endif
