@@ -19,7 +19,7 @@ public:
 	Particle(Movement _move,int _mass,int _radius){
 		this->move=_move;
 		this->mass=_mass;
-		this->radis=_radius;
+		this->radius=_radius;
 	};
 
 	Movement getMovementData(){
