@@ -4,6 +4,24 @@ class TupleOperations
 {
 public:
 
+	bool isSameI(int _first,int _second){
+		if(_first==_second){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	bool isSameD(double _first,double _second){
+		if(abs(_first-_second)<=1e-6){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
 	std::tuple<int,int> sM(std::tuple<int,int> tupleToOperate,int coff){
 		std::get<0>(tupleToOperate)*=coff;
 		std::get<1>(tupleToOperate)*=coff;
@@ -24,7 +42,7 @@ public:
 
 	std::tuple<double,double> aT(std::tuple<double,double> first,std::tuple<double,double> second){
 		std::get<0>(first)+=std::get<0>(second);
-		set::get<1>(first)+=std::get<1>(second);
+		std::get<1>(first)+=std::get<1>(second);
 		return first;
 	}
 
