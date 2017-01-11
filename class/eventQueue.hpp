@@ -25,7 +25,6 @@ public:
 	//Tells if an event is going to occur at the present time.
 	bool isEventOccur(int time){
 		if(eventQueue.empty()){
-			this->compute();
 			return false;
 		}
 		else{
