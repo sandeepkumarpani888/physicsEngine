@@ -6,6 +6,24 @@ class TupleOperations
 {
 public:
 
+	bool checkIsSameSign(int _first,int _second){
+		if(_first*_second>=0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	bool checkIsSameSign(double _first,double _second){
+		if(_first*_second>=0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
 	bool isSameI(int _first,int _second){
 		if(_first==_second){
 			return true;
