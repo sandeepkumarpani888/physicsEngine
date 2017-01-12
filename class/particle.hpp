@@ -3,6 +3,8 @@
 
 #include <bits/stdc++.h>
 #include "movement.hpp"
+#include "opencv/cv.h"
+#include "opencv/highgui.h"
 
 class Particle
 {
@@ -13,6 +15,7 @@ private:
 	int radius;
 	int index;
 	bool isIndexSet;
+	cv::Scalar color;
 
 public:
 	Particle(){
@@ -21,6 +24,7 @@ public:
 		radius=20;
 		index=-1;
 		isIndexSet=false;
+		color=cv::Scalar(0,0,0);
 	};
 
 	Particle(Movement _move,int _mass,int _radius){

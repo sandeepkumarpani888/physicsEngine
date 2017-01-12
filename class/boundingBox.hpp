@@ -28,13 +28,17 @@ public:
 	//Returns the event object in case of collision between particle
 	//and the box.
 	Event getCollisionEventP2B(Particle partA){
-		int timeOfCollision=py.getTimeOfCollisionP2B(
+		std::pair<double,int> timeDirOfCollision=py.getTimeDirectionOfCollisionP2B(
 			partA.getMovementData(),
 			partA.getCordinates(),
-			partA.getRadius());
-		Particle partB;
-		partB.setMass(-1);
-		return Event{timeOfCollision,partA,partB};
+			partA.getRadius(),
+			w);
+		if(((int)ceil(timeDirOfCollision.first))!=-1){
+			Particle partB;
+			partB.setMass(-1);
+			partB.setIndex(timeDirOfCollision.second);
+			return Event{(int)(ceil(timeDirOfCollision.first)),partA,partB,1};
+		}
 	}
 
 	//Returns the event object in case of collision between the given
@@ -48,11 +52,11 @@ public:
 			partA.getRadius(),
 			partB.getRadius()));
 		if(timeOfCollision==-1){
-			return Event{-1,partA,partB};
+			return Event{-1,partA,partB,0};
 		}
 		else{
 			timeOfCollision+=tk.getCurrentTime();
-			return Event{timeOfCollision,partA,partB};
+			return Event{timeOfCollision,partA,partB,0};
 		}
 	}
 
@@ -66,18 +70,21 @@ public:
 				Event collisionEvent=getCollisionEventP2P(
 					particlesInBox[i],
 					particlesInBox[j]);
-				printf("EVENTS: (time = %d) %d %d\n",collisionEvent.getTime(),i,j);
 				if(collisionEvent.getTime()!=-1){
+					printf("EVENTS: (time = %d) %d %d\n",collisionEvent.getTime(),i,j);
 					events.push(collisionEvent);
 				}
 			}
 		}
 
-		// for(int i=0;i<numParticles;i++){
-		// 	Event collisionEvent=getCollisionEventP2B(
-		// 		particlesInBox[i]);
-		// 	events.push(collisionEvent);
-		// }
+		for(int i=0;i<numParticles;i++){
+			Event collisionEvent=getCollisionEventP2B(
+				particlesInBox[i]);
+			printf("EVENTS WITH WALL: %d\n",collisionEvent.getTime());
+			if(collisionEvent.getTime()!=-1){
+				events.push(collisionEvent);
+			}
+		}
 	}
 
 	void drawCircle(cv::Mat image,std::tuple<int,int> _pos,int index){
@@ -85,8 +92,8 @@ public:
 		cv::Point centre;centre.x=std::get<0>(_pos);centre.y=std::get<1>(_pos);
 		cv::circle(image,
 			centre,
-			w/32,
-			cv::Scalar(index*100,125,255),
+			w/64,
+			cv::Scalar(index*100,index*100,255),
 			thickness,
 			lineType);
 	}
@@ -124,24 +131,40 @@ public:
 
 	//Update the velocities of the particle after collision.
 	void updateParticles(Event currEvent){
-		std::vector<Particle> particlesInvolved=currEvent.getParticles();
-		assert(particlesInvolved.size()==2);
-		std::tuple<double,double> velA=particlesInvolved[0].getVelocity();
-		std::tuple<double,double> velB=particlesInvolved[1].getVelocity();
-		// printf("PARTICLES: (%d %d)\n",particlesInvolved[0].getIndex(),particlesInvolved[1].getIndex());
-		// printf("INITIAL: FirstParticle: (%.6lf,%.6lf)\n",std::get<0>(velA),std::get<1>(velA));
-		// printf("INITIAL: SecondParticle: (%.6lf,%.6lf)\n",std::get<0>(velB),std::get<1>(velB));
-		std::pair<Movement,Movement> finalMovement=py.getFinalVelocities(
-			particlesInvolved[0],
-			particlesInvolved[1]);
-		int firstIndex=particlesInvolved[0].getIndex();
-		int secondIndex=particlesInvolved[1].getIndex();
-		this->particlesInBox[firstIndex].setVelocity(finalMovement.first.getVelocity());
-		this->particlesInBox[secondIndex].setVelocity(finalMovement.second.getVelocity());
-		velA=this->particlesInBox[firstIndex].getVelocity();
-		velB=this->particlesInBox[secondIndex].getVelocity();
-		// printf("FINAL: FirstParticle(%d): (%.6lf,%.6lf)\n",firstIndex,std::get<0>(velA),std::get<1>(velA));
-		// printf("FINAL: SecondParticle(%d): (%.6lf,%.6lf)\n",secondIndex,std::get<0>(velB),std::get<1>(velB));
+		if(currEvent.getType()==0){
+			std::vector<Particle> particlesInvolved=currEvent.getParticles();
+			assert(particlesInvolved.size()==2);
+			std::tuple<double,double> velA=particlesInvolved[0].getVelocity();
+			std::tuple<double,double> velB=particlesInvolved[1].getVelocity();
+			// printf("PARTICLES: (%d %d)\n",particlesInvolved[0].getIndex(),particlesInvolved[1].getIndex());
+			// printf("INITIAL: FirstParticle: (%.6lf,%.6lf)\n",std::get<0>(velA),std::get<1>(velA));
+			// printf("INITIAL: SecondParticle: (%.6lf,%.6lf)\n",std::get<0>(velB),std::get<1>(velB));
+			std::pair<Movement,Movement> finalMovement=py.getFinalVelocities(
+				particlesInvolved[0],
+				particlesInvolved[1]);
+			int firstIndex=particlesInvolved[0].getIndex();
+			int secondIndex=particlesInvolved[1].getIndex();
+			this->particlesInBox[firstIndex].setVelocity(finalMovement.first.getVelocity());
+			this->particlesInBox[secondIndex].setVelocity(finalMovement.second.getVelocity());
+			velA=this->particlesInBox[firstIndex].getVelocity();
+			velB=this->particlesInBox[secondIndex].getVelocity();
+			// printf("FINAL: FirstParticle(%d): (%.6lf,%.6lf)\n",firstIndex,std::get<0>(velA),std::get<1>(velA));
+			// printf("FINAL: SecondParticle(%d): (%.6lf,%.6lf)\n",secondIndex,std::get<0>(velB),std::get<1>(velB));
+		}
+		else if(currEvent.getType()==1){
+			std::vector<Particle> particlesInvolved=currEvent.getParticles();
+			assert(particlesInvolved.size()==2);
+			int sideOfWall=particlesInvolved[1].getIndex();
+			int particleIndex=particlesInvolved[0].getIndex();
+			std::tuple<double,double> velA=particlesInvolved[0].getVelocity();
+			if(sideOfWall==0 || sideOfWall==2){
+				std::get<1>(velA)=-std::get<1>(velA);
+			}
+			else if(sideOfWall==1 || sideOfWall==3){
+				std::get<0>(velA)=-std::get<0>(velA);
+			}
+			this->particlesInBox[particleIndex].setVelocity(velA);
+		}
 	}
 
 	//The function that starts it all.
@@ -182,50 +205,6 @@ public:
 		printf("Particle INDEX: %d\n",this->particlesInBox[this->particlesInBox.size()-1].getIndex());
 	}
 
-	//Which side does it collide with (returns an integer).
-	int whichSideCollides(){
-		//TODO
-	}	
-
-	//Which (up)side does it collide with
-	bool upBoxSideCollides(int side){
-		if(side==0){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-
-	//Which (low)side does it collide with
-	bool lowBoxSideCollides(int side){
-		if(side==2){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-
-	//Which (right)side does it collide with
-	bool rightBoxSideCollides(int side){
-		if(side==1){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-
-	//Which (left)side does it collide with
-	bool leftBoxSideCollides(int side){
-		if(side==3){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
 };
 
 #endif

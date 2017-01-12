@@ -6,6 +6,15 @@ class TupleOperations
 {
 public:
 
+	bool isZero(double _first){
+		if(abs(_first)<=1e-6){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
 	bool checkIsSameSign(int _first,int _second){
 		if(_first*_second>=0){
 			return true;

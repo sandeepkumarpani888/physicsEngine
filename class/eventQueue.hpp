@@ -7,18 +7,24 @@
 class Event{
 private:
 	int time;
+	int type;
 	Particle part1;
 	Particle part2;
 public:
 
-	Event(int _time,Particle _part1,Particle _part2){
+	Event(int _time,Particle _part1,Particle _part2,int _type){
 		this->time=_time;
 		this->part1=_part1;
 		this->part2=_part2;
+		this->type=_type;
 	}
 
 	int getTime(){
 		return this->time;
+	}
+
+	int getType(){
+		return this->type;
 	}
 	
 	bool operator<(const Event &other) const{
