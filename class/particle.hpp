@@ -11,12 +11,16 @@ private:
 	Movement move;
 	int mass;
 	int radius;
+	int index;
+	bool isIndexSet;
 
 public:
 	Particle(){
 		move=Movement();
 		mass=100;
 		radius=20;
+		index=-1;
+		isIndexSet=false;
 	};
 
 	Particle(Movement _move,int _mass,int _radius){
@@ -32,6 +36,13 @@ public:
 		std::get<0>(pos)+=(int)std::get<0>(vel);
 		std::get<1>(pos)+=(int)std::get<1>(vel);
 		this->move.setCordinates(pos);
+	}
+
+	void setIndex(int _index){
+		if(!this->isIndexSet){
+			this->isIndexSet=true;
+			this->index=_index;
+		}
 	}
 
 	Movement getMovementData(){
@@ -68,6 +79,10 @@ public:
 
 	std::tuple<double,double> getVelocity(){
 		return this->move.getVelocity();
+	}
+
+	int getIndex(){
+		return this->index;
 	}
 };
 

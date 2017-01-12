@@ -8,10 +8,12 @@ class TimeKeeper
 private:
 	int currentTimeMilli;
 	int delta;
+	bool startedBefore;
 public:
 	TimeKeeper(){
 		currentTimeMilli=0;
-		delta=100;
+		delta=1;
+		startedBefore=false;
 	};
 
 	int getCurrentTime(){
@@ -20,6 +22,13 @@ public:
 
 	void incrementTime(){
 		this->currentTimeMilli+=this->delta;
+	}
+
+	void startTime(){
+		if(!this->startedBefore){
+			this->startedBefore=true;
+			this->currentTimeMilli=0;
+		}
 	}
 };
 

@@ -24,6 +24,11 @@ public:
 	bool operator<(const Event &other) const{
 		return this->time>other.time;
 	}
+
+	std::vector<Particle> getParticles(){
+		std::vector<Particle> result={this->part1,this->part2};
+		return result;
+	}
 };
 
 class EventQueue
@@ -49,6 +54,18 @@ public:
 		eventQueue.push(_event);
 	}
 
+	//HELPS IN CLEARING DEPRECATED EVENTS
+	void clearRedundant(int _time){
+		while(!this->eventQueue.empty()){
+			Event currentEvent=this->eventQueue.top();
+			if(currentEvent.getTime()<_time){
+				this->eventQueue.pop();
+			}
+			else{
+				break;
+			}
+		}
+	}
 
 	//Tells if an event is going to occur at the present time.
 	bool isEventOccur(int _time){
@@ -64,6 +81,14 @@ public:
 				return false;
 			}
 		}
+	}
+
+	//Returns the most recent event and removes it from the eventQueue.
+	Event getEvent(){
+		assert(!this->eventQueue.empty());
+		Event mostImportantEvent=eventQueue.top();
+		eventQueue.pop();
+		return mostImportantEvent;
 	}
 };
 
