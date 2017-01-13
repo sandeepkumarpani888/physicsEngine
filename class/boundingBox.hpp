@@ -37,7 +37,7 @@ public:
 			Particle partB;
 			partB.setMass(-1);
 			partB.setIndex(timeDirOfCollision.second);
-			return Event{(int)(ceil(timeDirOfCollision.first)),partA,partB,1};
+			return Event{(int)(ceil(timeDirOfCollision.first))+tk.getCurrentTime(),partA,partB,1};
 		}
 	}
 

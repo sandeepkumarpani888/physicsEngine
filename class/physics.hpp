@@ -11,11 +11,6 @@ private:
 	TupleOperations tO;
 public:
 
-	//Gets the side of the wall with which to collide.
-	int getSideToCollideWith(Movement move){
-		//TODO
-	}
-
 	//Gets the time of collision of the particle with the wall.
 	double getTimeOfCollisionP2P(Movement movA,
 		Movement movB,
@@ -30,7 +25,15 @@ public:
 		bool yCorSame=tO.isSameI(std::get<1>(cordA),std::get<1>(cordB));
 		bool xVelSame=tO.isSameD(std::get<0>(velA),std::get<0>(velB));
 		bool yVelSame=tO.isSameD(std::get<1>(velA),std::get<1>(velB));
-		// printf("%d %d %d %d\n",xCorSame,yCorSame,xVelSame,yVelSame);
+		printf("COLLISION WITH PARTICLE==\n");
+		printf("CORDINATES(0): (%d,%d)\n",std::get<0>(cordA),std::get<1>(cordA));
+		printf("CORDINATES(1): (%d,%d)\n",std::get<0>(cordB),std::get<1>(cordB));
+		printf("VELOCITY(0): (%.6lf,%.6lf)\n",std::get<0>(velA),std::get<1>(velA));
+		printf("VELOCITY(1): (%.6lf,%.6lf)\n",std::get<0>(velB),std::get<1>(velB));
+		printf("%d %d %d %d\n",xCorSame,yCorSame,xVelSame,yVelSame);
+		if(xVelSame && yVelSame){
+			return -1.0;
+		}
 		if(xCorSame && yCorSame){
 			return 0.0;
 		}
@@ -38,6 +41,7 @@ public:
 			double timeY=-(std::get<1>(cordA)-std::get<1>(cordB))/(std::get<1>(velA)-std::get<1>(velB));
 			if(xVelSame){
 				if(timeY>=0){
+					printf("xCorSame && !yCorSame (%.6lf)\n",timeY);
 					return timeY;
 				}
 			}
@@ -46,6 +50,7 @@ public:
 			double timeX=-(std::get<0>(cordA)-std::get<0>(cordB))/(std::get<0>(velA)-std::get<0>(velB));
 			if(yVelSame){
 				if(timeX>=0){
+					printf("!xCorSame && yCorSame (%.6lf)\n",timeX);
 					return timeX;
 				}
 			}
@@ -54,9 +59,11 @@ public:
 			double timeX=-(std::get<0>(cordA)-std::get<0>(cordB))/(std::get<0>(velA)-std::get<0>(velB));
 			double timeY=-(std::get<1>(cordA)-std::get<1>(cordB))/(std::get<1>(velA)-std::get<1>(velB));
 			if(tO.isSameD(timeX,timeY) && timeX>=0.0){
+				printf("!xCorSame && !yCorSame (%.6lf)\n",timeX);
 				return timeX;
 			}
 		}
+		printf("INVALID EVENT\n");
 		return -1.0;
 	}
 
@@ -80,26 +87,40 @@ public:
 		if(isVelXZero && isVelYZero){
 			return std::make_pair(-1.0,-1);
 		}
-		else if(isVelXZero && !isVelYZero){
+		if(!isVelYZero){
 			if(velY>=0){
 				timeY=((double)(w-1-cordY))/velY;
 				sideToCollideY=2;
 			}
 			else{
-				timeY=((double)cordY)/velY;
+				timeY=-((double)cordY)/velY;
 				sideToCollideY=0;
 			}
 		}
-		else if(!isVelXZero && isVelYZero){
+		if(!isVelXZero){
 			if(velX>=0){
 				timeX=((double)(w-1-cordX))/velX;
-				sideToCollideX=1;
-			}
-			else{
-				timeX=((double)cordX)/velX;
 				sideToCollideX=3;
 			}
+			else{
+				timeX=-((double)cordX)/velX;
+				sideToCollideX=1;
+			}
 		}
+		timeX=floor(timeX);
+		timeY=floor(timeY);
+		if(abs(timeX)==0){
+			timeX=timeX+1;
+		}
+		if(abs(timeY)==0){
+			timeY=timeY+1;
+		}
+		printf("COLLISION WITH WALL===\n");
+		printf("VELOCITY: (%.6lf,%.6lf)\n",std::get<0>(velParticle),std::get<1>(velParticle));
+		printf("CORDINATES: (%d,%d)\n",w-std::get<0>(cordinate),w-std::get<1>(cordinate));
+		printf("TIME_TO_HIT_WALL: (%.6lf,%.6lf)\n",timeX,timeY);
+		printf("IS_VELOCITY_ZERO: (%d,%d)\n",isVelXZero,isVelYZero);
+		printf("SIDE_TO_COLLIDE: (%d,%d)\n",sideToCollideX,sideToCollideY);
 		if(sideToCollideY==-1 || sideToCollideX==-1){
 			if(sideToCollideX!=-1){
 				return std::make_pair(timeX,sideToCollideX);
